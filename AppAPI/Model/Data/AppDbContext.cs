@@ -18,7 +18,6 @@ namespace AppAPI.Model.Data
         public DbSet<SanPham> SanPham { get; set; }
         public DbSet<Size> Size { get; set; }
         public DbSet<Size_SanPham> Size_SanPham { get; set; }
-        #endregion
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
