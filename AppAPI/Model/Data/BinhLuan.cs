@@ -11,10 +11,10 @@ namespace AppAPI.Model.Data
         public string? TieuDe {  get; set; }
         public string? NoiDung { get; set; }
         public DateTime? NgayBinhLuan { get; set; }
-        [ForeignKey("MaKhachHang")]
-        public string? MaKhachHang { get; set; }
 
-
+        public Guid MaKhachHang { get; set; }
+        public Guid MaSanPham { get; set; }
+        public SanPham SanPham { get; set; }
         public KhachHang KhachHang { get; set; }
     }
 }

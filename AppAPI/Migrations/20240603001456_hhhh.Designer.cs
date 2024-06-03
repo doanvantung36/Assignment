@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240524085136_Lan7")]
-    partial class Lan7
+    [Migration("20240603001456_hhhh")]
+    partial class hhhh
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,16 +31,14 @@ namespace AppAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("KhachHangMaKhachHang")
+                    b.Property<Guid>("MaKhachHang")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("MaKhachHang")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("MaSanPham")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("NgayBinhLuan")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("getutcdate()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("NoiDung")
                         .HasColumnType("nvarchar(max)");
@@ -50,9 +48,11 @@ namespace AppAPI.Migrations
 
                     b.HasKey("MaBinhLuan");
 
-                    b.HasIndex("KhachHangMaKhachHang");
+                    b.HasIndex("MaKhachHang");
 
-                    b.ToTable("BinhLuan", (string)null);
+                    b.HasIndex("MaSanPham");
+
+                    b.ToTable("BinhLuan");
                 });
 
             modelBuilder.Entity("AppAPI.Model.Data.HoaDon", b =>
@@ -64,11 +64,8 @@ namespace AppAPI.Migrations
                     b.Property<string>("DiaChiGiaoHang")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("KhachHangMaKhachHang")
+                    b.Property<Guid>("MaKhachHang")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("MaKhachHang")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("NgayGiaoHang")
                         .HasColumnType("datetime2");
@@ -81,7 +78,7 @@ namespace AppAPI.Migrations
 
                     b.HasKey("MaHoaDon");
 
-                    b.HasIndex("KhachHangMaKhachHang");
+                    b.HasIndex("MaKhachHang");
 
                     b.ToTable("HoaDon");
                 });
@@ -97,29 +94,19 @@ namespace AppAPI.Migrations
                     b.Property<Guid>("MaSize")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("DonGia")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid?>("LoaiSanPhamMaLoaiSanPham")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("MauSacMaMau")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("DonGia")
+                        .HasColumnType("int");
 
                     b.Property<int>("SoLuong")
                         .HasColumnType("int");
 
                     b.HasKey("MaHoaDon", "MaSanPham", "MaSize");
 
-                    b.HasIndex("LoaiSanPhamMaLoaiSanPham");
-
                     b.HasIndex("MaSanPham");
 
                     b.HasIndex("MaSize");
 
-                    b.HasIndex("MauSacMaMau");
-
-                    b.ToTable("HoaDonChiTiet", (string)null);
+                    b.ToTable("HoaDonChiTiets");
                 });
 
             modelBuilder.Entity("AppAPI.Model.Data.KhachHang", b =>
@@ -203,16 +190,10 @@ namespace AppAPI.Migrations
                     b.Property<string>("HinhHanh")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("LoaiSanPhamMaLoaiSanPham")
+                    b.Property<Guid>("MaLoaiSanPham")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("MaLoaiSanPham")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MaMau")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("MauSacMaMau")
+                    b.Property<Guid>("MaMau")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("NgayNhapHang")
@@ -226,9 +207,9 @@ namespace AppAPI.Migrations
 
                     b.HasKey("MaSanPham");
 
-                    b.HasIndex("LoaiSanPhamMaLoaiSanPham");
+                    b.HasIndex("MaLoaiSanPham");
 
-                    b.HasIndex("MauSacMaMau");
+                    b.HasIndex("MaMau");
 
                     b.ToTable("SanPham");
                 });
@@ -249,69 +230,68 @@ namespace AppAPI.Migrations
 
             modelBuilder.Entity("AppAPI.Model.Data.Size_SanPham", b =>
                 {
-                    b.Property<Guid>("MaSanPham")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("MaSize")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("MaSanPham", "MaSize");
+                    b.Property<Guid>("MaSanPham")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasIndex("MaSize");
+                    b.HasKey("MaSize", "MaSanPham");
 
-                    b.ToTable("Size_SanPham", (string)null);
+                    b.HasIndex("MaSanPham");
+
+                    b.ToTable("Size_SanPham");
                 });
 
             modelBuilder.Entity("AppAPI.Model.Data.BinhLuan", b =>
                 {
                     b.HasOne("AppAPI.Model.Data.KhachHang", "KhachHang")
-                        .WithMany("BinhLuans")
-                        .HasForeignKey("KhachHangMaKhachHang")
+                        .WithMany("BinhLuan")
+                        .HasForeignKey("MaKhachHang")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AppAPI.Model.Data.SanPham", "SanPham")
+                        .WithMany("binhLuans")
+                        .HasForeignKey("MaSanPham")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("KhachHang");
+
+                    b.Navigation("SanPham");
+                });
+
+            modelBuilder.Entity("AppAPI.Model.Data.HoaDon", b =>
+                {
+                    b.HasOne("AppAPI.Model.Data.KhachHang", "KhachHang")
+                        .WithMany("HoaDon")
+                        .HasForeignKey("MaKhachHang")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("KhachHang");
                 });
 
-            modelBuilder.Entity("AppAPI.Model.Data.HoaDon", b =>
-                {
-                    b.HasOne("AppAPI.Model.Data.KhachHang", "KhachHang")
-                        .WithMany("HoaDons")
-                        .HasForeignKey("KhachHangMaKhachHang");
-
-                    b.Navigation("KhachHang");
-                });
-
             modelBuilder.Entity("AppAPI.Model.Data.HoaDonChiTiet", b =>
                 {
-                    b.HasOne("AppAPI.Model.Data.LoaiSanPham", null)
-                        .WithMany("HoaDonChiTiets")
-                        .HasForeignKey("LoaiSanPhamMaLoaiSanPham");
-
                     b.HasOne("AppAPI.Model.Data.HoaDon", "HoaDon")
                         .WithMany("HoaDonChiTiets")
                         .HasForeignKey("MaHoaDon")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_HoaDon_HoaDonChiTiet");
+                        .IsRequired();
 
                     b.HasOne("AppAPI.Model.Data.SanPham", "SanPham")
                         .WithMany("HoaDonChiTiets")
                         .HasForeignKey("MaSanPham")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_SanPham_HoaDonChiTiet");
+                        .IsRequired();
 
                     b.HasOne("AppAPI.Model.Data.Size", "Size")
                         .WithMany("HoaDonChiTiets")
                         .HasForeignKey("MaSize")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Size_HoaDonChiTiet");
-
-                    b.HasOne("AppAPI.Model.Data.MauSac", null)
-                        .WithMany("HoaDonChiTiets")
-                        .HasForeignKey("MauSacMaMau");
+                        .IsRequired();
 
                     b.Navigation("HoaDon");
 
@@ -323,12 +303,16 @@ namespace AppAPI.Migrations
             modelBuilder.Entity("AppAPI.Model.Data.SanPham", b =>
                 {
                     b.HasOne("AppAPI.Model.Data.LoaiSanPham", "LoaiSanPham")
-                        .WithMany()
-                        .HasForeignKey("LoaiSanPhamMaLoaiSanPham");
+                        .WithMany("SanPham")
+                        .HasForeignKey("MaLoaiSanPham")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("AppAPI.Model.Data.MauSac", "MauSac")
-                        .WithMany()
-                        .HasForeignKey("MauSacMaMau");
+                        .WithMany("SanPham")
+                        .HasForeignKey("MaMau")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("LoaiSanPham");
 
@@ -341,15 +325,13 @@ namespace AppAPI.Migrations
                         .WithMany("size_SanPhams")
                         .HasForeignKey("MaSanPham")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_SanPham_Size_SanPham");
+                        .IsRequired();
 
                     b.HasOne("AppAPI.Model.Data.Size", "Size")
                         .WithMany("size_SanPhams")
                         .HasForeignKey("MaSize")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Size_Size_SanPham");
+                        .IsRequired();
 
                     b.Navigation("SanPham");
 
@@ -363,24 +345,26 @@ namespace AppAPI.Migrations
 
             modelBuilder.Entity("AppAPI.Model.Data.KhachHang", b =>
                 {
-                    b.Navigation("BinhLuans");
+                    b.Navigation("BinhLuan");
 
-                    b.Navigation("HoaDons");
+                    b.Navigation("HoaDon");
                 });
 
             modelBuilder.Entity("AppAPI.Model.Data.LoaiSanPham", b =>
                 {
-                    b.Navigation("HoaDonChiTiets");
+                    b.Navigation("SanPham");
                 });
 
             modelBuilder.Entity("AppAPI.Model.Data.MauSac", b =>
                 {
-                    b.Navigation("HoaDonChiTiets");
+                    b.Navigation("SanPham");
                 });
 
             modelBuilder.Entity("AppAPI.Model.Data.SanPham", b =>
                 {
                     b.Navigation("HoaDonChiTiets");
+
+                    b.Navigation("binhLuans");
 
                     b.Navigation("size_SanPhams");
                 });

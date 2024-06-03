@@ -9,8 +9,8 @@ namespace AppAPI.Model.Data
         public Guid MaHoaDon { get; set; }
         public DateTime NgayLapHoaDon { get; set; }
         public DateTime NgayGiaoHang { get; set; }
-        [ForeignKey("MaKhachHang")]
-        public string MaKhachHang { get; set; }
+        
+        public Guid MaKhachHang { get; set; }
         public string? DiaChiGiaoHang { get; set; }
         public byte TrangThai {  get; set; }
 
